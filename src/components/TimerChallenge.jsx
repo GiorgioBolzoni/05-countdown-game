@@ -12,7 +12,7 @@ export default function TimerChallenge({title, targetTime}){
     function handleStart(){
         timer.current = setTimeout(() => {
             setTimerExpired(true);
-            dialog.current.showModal(); // metodo x mostrare modale
+            dialog.current.open(); // è il metodo open definito nella funzione useImperativeHandle in ResultModal
         }, targetTime * 1000) // targetTime * 1000 = 1 secondo
 
         setTimerStarted(true);

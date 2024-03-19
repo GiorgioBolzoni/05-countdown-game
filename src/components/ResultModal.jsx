@@ -1,12 +1,26 @@
-import {forwardRef} from 'react'; // per portare ref da un componente ad un altro componente
+import {forwardRef, useImperativeHandle, useRef} from 'react'; // per portare ref da un componente ad un altro componente
 
 // devo metterlo attorno alla mia funzione come sotto:
 const ResultModal = forwardRef(function ResultModal({result, targetTime}, ref){
+    const dialog = useRef();
+
+    useImperativeHandle(ref, () => {
+        return {
+            open(){
+                dialog.current.showModal();
+            }
+        }
+    });
+
     return (
-    <dialog ref={ref} className="result-modal" 
-    // open
-    // open lo rende visibile MA forzandolo, non va bene quindi uso Ref
-    > 
+    <div ref={dialog} className="result-modal">           
+     {/* col metodo useImperativeHandle ho staccato il componente TimerChallenge da questo elemento dialog che ora diventare un normale div se qualcuno lo modifica
+    <dialog ref={dialog} className="result-modal"  </dialog>  
+
+
+     open
+     open lo rende visibile MA forzandolo, non va bene quindi uso Ref  */}
+    
         <h2>You {result}</h2>
         <p>The target time was <strong>{targetTime} seconds.</strong></p>
         <p>You stopped the timer with <strong>XXX seconds left.</strong></p>
@@ -14,7 +28,7 @@ const ResultModal = forwardRef(function ResultModal({result, targetTime}, ref){
             <button>Close</button>       
             {/* questo costrutto all'interno di un dialog permette di chiudere la modale senza ulteriore codice JS */}
         </form>
-    </dialog>
+    </div> 
     )
 })
 
