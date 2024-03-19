@@ -17,7 +17,7 @@ const ResultModal = forwardRef(function ResultModal({ targetTime, remainingTime,
     });
 
     return (
-    <dialog ref={dialog} className="result-modal">           
+    <dialog ref={dialog} className="result-modal" onClose={onReset}>           
      {/* col metodo useImperativeHandle ho staccato il componente TimerChallenge da questo elemento dialog che ora diventare un normale div se qualcuno lo modifica /
     <dialog ref={dialog} className="result-modal"  </dialog>  */}
 
