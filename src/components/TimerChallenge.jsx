@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 export default function TimerChallenge({title, targetTime}){
+    const timer = useRef();                                     // permette di gestire NON la UI ma dietro le quinte e non riaggiorna la UI quando interagisco col timer
     const [timerStarted, setTimerStarted] = useState(false);
     const [timerExpired, setTimerExpired] = useState(false);
 
+    // let timer; non va bene perchè verrebbe sovrascritta se starto altri countdown (es 5 sec e poi 10 sec) => devo usare Ref
+
     function handleStart(){
-        setTimeout(() => {
+        timer.current = setTimeout(() => {
             setTimerExpired(true);
         }, targetTime * 1000) // targetTime * 1000 = 1 secondo
 
@@ -12,7 +15,7 @@ export default function TimerChallenge({title, targetTime}){
     }
 
     function handleStop(){
-        
+        clearTimeout(timer.current);
     }
 
     return (
@@ -24,7 +27,7 @@ export default function TimerChallenge({title, targetTime}){
                 {targetTime} second{targetTime > 1 ? "s" : ""}
             </p>
             <p>
-                <button onClick={handleStart}>
+                <button onClick={timerStarted ? handleStop : handleStart}>
                     {timerStarted ? 'Stop' : 'Start'} Challenge
                 </button>
             </p>
