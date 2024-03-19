@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import ResultModal from "./ResultModal.jsx";
 export default function TimerChallenge({title, targetTime}){
     const timer = useRef();                                     // permette di gestire NON la UI ma dietro le quinte e non riaggiorna la UI quando interagisco col timer
+    const dialog = useRef(); 
+
     const [timerStarted, setTimerStarted] = useState(false);
     const [timerExpired, setTimerExpired] = useState(false);
 
@@ -10,6 +12,7 @@ export default function TimerChallenge({title, targetTime}){
     function handleStart(){
         timer.current = setTimeout(() => {
             setTimerExpired(true);
+            dialog.current.showModal(); // metodo x mostrare modale
         }, targetTime * 1000) // targetTime * 1000 = 1 secondo
 
         setTimerStarted(true);
@@ -21,7 +24,10 @@ export default function TimerChallenge({title, targetTime}){
 
     return (
         <>
-            {timerExpired && <ResultModal targetTime={targetTime} result='lost' /> }
+            {/* {timerExpired &&  */} 
+            <ResultModal ref={dialog} targetTime={targetTime} result='lost' /> 
+            {/* devo renderlo sempre visibile, anche se sarà visibile effettivamente solo quando viene chiamato nella funzione */}
+              {/* } */}
             <section
             className="challenge">
                 <h2>{title}</h2>
