@@ -4,44 +4,46 @@ export default function TimerChallenge({title, targetTime}){
     const timer = useRef();                                     // permette di gestire NON la UI ma dietro le quinte e non riaggiorna la UI quando interagisco col timer
     const dialog = useRef(); 
 
-    const [timerStarted, setTimerStarted] = useState(false);
-    const [timerExpired, setTimerExpired] = useState(false);
+    const [timeRemaining, setTimeRemaining] = useState(targetTime * 1000);
 
-    // let timer; non va bene perchè verrebbe sovrascritta se starto altri countdown (es 5 sec e poi 10 sec) => devo usare Ref
+    const timerIsActive = timeRemaining > 0 && timeRemaining < targetTime * 1000;
+
+    if(timeRemaining <= 0){
+        clearInterval(timer.current);
+        setTimeRemaining(targetTime * 1000);
+        dialog.current.open();
+    }
 
     function handleStart(){
-        timer.current = setTimeout(() => {
-            setTimerExpired(true);
-            dialog.current.open(); // è il metodo open definito nella funzione useImperativeHandle in ResultModal
-        }, targetTime * 1000) // targetTime * 1000 = 1 secondo
+        timer.current = setInterval(() => {
+            setTimeRemaining(prevTimeRemaining => prevTimeRemaining - 10); // viene aggiornato ogni 10 millisecondi con il tempo rimanente (tolgo i 10 millisecondi)
+        }, 10) // 10 millisecondi, posso usarne quanti voglio è come esempio. Questo perchè setInterval fa ripartire la funzione continuamente ogni 10 millisecondi in questo caso
 
         setTimerStarted(true);
     }
 
     function handleStop(){
-        clearTimeout(timer.current);
+        dialog.current.open();
+        clearInterval(timer.current);
     }
 
     return (
         <>
-            {/* {timerExpired &&  */} 
+           
             <ResultModal ref={dialog} targetTime={targetTime} result='lost' /> 
-            {/* devo renderlo sempre visibile, anche se sarà visibile effettivamente solo quando viene chiamato nella funzione */}
-              {/* } */}
             <section
             className="challenge">
                 <h2>{title}</h2>
-                {timerExpired && <p>You Lost</p>}
                 <p className="challenge-time">
                     {targetTime} second{targetTime > 1 ? "s" : ""}
                 </p>
                 <p>
-                    <button onClick={timerStarted ? handleStop : handleStart}>
-                        {timerStarted ? 'Stop' : 'Start'} Challenge
+                    <button onClick={timerIsActive ? handleStop : handleStart}>
+                        {timerIsActive ? 'Stop' : 'Start'} Challenge
                     </button>
                 </p>
-                <p className={timerStarted ? 'active' : undefined}>
-                    {timerStarted ? 'Time is running...' : 'Timer inactive'}
+                <p className={timerIsActive ? 'active' : undefined}>
+                    {timerIsActive ? 'Time is running...' : 'Timer inactive'}
                 </p>
             </section>
         </>
