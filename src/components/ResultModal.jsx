@@ -1,4 +1,5 @@
 import {forwardRef, useImperativeHandle, useRef} from 'react'; // per portare ref da un componente ad un altro componente
+import { createPortal } from 'react-dom'; // x trasportare un elemento del codice jsx in un altro punto del DOM, in modo che non sia troppo annidato nel cadice ma, per esempio, per portarlo più vicino alla radice del <body>
 
 // devo metterlo attorno alla mia funzione come sotto:
 const ResultModal = forwardRef(function ResultModal({ targetTime, remainingTime, onReset }, ref){
@@ -16,7 +17,7 @@ const ResultModal = forwardRef(function ResultModal({ targetTime, remainingTime,
         }
     });
 
-    return (
+    return createPortal (
     <dialog ref={dialog} className="result-modal" onClose={onReset}>           
      {/* col metodo useImperativeHandle ho staccato il componente TimerChallenge da questo elemento dialog che ora diventare un normale div se qualcuno lo modifica /
     <dialog ref={dialog} className="result-modal"  </dialog>  */}
@@ -32,7 +33,8 @@ const ResultModal = forwardRef(function ResultModal({ targetTime, remainingTime,
             <button>Close</button>       
             {/* questo costrutto all'interno di un dialog permette di chiudere la modale senza ulteriore codice JS */}
         </form>
-    </dialog> 
+    </dialog>, // devo aggiungere la virgola per poter scrivere la parte qui sotto  
+    document.getElementById('modal') // l'ho portato al div con id modal ----> vedi index.html
     )
 })
 
